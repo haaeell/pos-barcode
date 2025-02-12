@@ -17,10 +17,16 @@ class CreateAllTables extends Migration
             $table->string('name');
             $table->timestamps();
         });
+        Schema::create('categories_expenses', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
 
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('code');
             $table->decimal('sale_price', 10, 2);
             $table->integer('stock');
             $table->string('unit');
@@ -39,7 +45,7 @@ class CreateAllTables extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('category_expense_id')->constrained('categories');
+            $table->foreignId('category_expense_id')->constrained('categories_expenses');
             $table->decimal('amount', 10, 2);
             $table->timestamps();
         });
