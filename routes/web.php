@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductIncomeController;
 use App\Http\Controllers\ExpenseController;
@@ -19,6 +20,7 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('categories-expense', CategoryExpenseController::class);
     Route::resource('products', ProductController::class);
     Route::resource('product-incomes', ProductIncomeController::class);
     Route::resource('expenses', ExpenseController::class);

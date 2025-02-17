@@ -30,13 +30,13 @@ class CreateAllTables extends Migration
             $table->decimal('sale_price', 10, 2);
             $table->integer('stock');
             $table->string('unit');
-            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
 
         Schema::create('product_incomes', function (Blueprint $table) {
             $table->id(); 
-            $table->foreignId('product_id')->constrained('products');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('qty');
             $table->decimal('purchase_price', 10, 2);
             $table->timestamps();
@@ -45,14 +45,14 @@ class CreateAllTables extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('category_expense_id')->constrained('categories_expenses');
+            $table->foreignId('category_expense_id')->constrained('categories_expenses')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->timestamps();
         });
 
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cashier_id')->constrained('users');
+            $table->foreignId('cashier_id')->constrained('users')->onDelete('cascade');
             $table->date('date');
             $table->string('payment_type');
             $table->decimal('total_payment', 10, 2);
@@ -61,8 +61,8 @@ class CreateAllTables extends Migration
 
         Schema::create('transaction_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_id')->constrained('transactions');
-            $table->foreignId('product_id')->constrained('products');
+            $table->foreignId('transaction_id')->constrained('transactions')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('qty');
             $table->timestamps();
         });

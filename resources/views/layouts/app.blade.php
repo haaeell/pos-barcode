@@ -27,6 +27,9 @@
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css') }}/app-light.css" id="lightTheme">
     <link rel="stylesheet" href="{{ asset('assets/css') }}/app-dark.css" id="darkTheme" disabled>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 
 <body class="vertical  light  ">
@@ -103,31 +106,43 @@
 
                     </li>
                     <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('categories*') ? 'text-primary fw-bold' : '' }}" href="/categories">
+                        <a class="nav-link {{ Request::is('categories') ? 'text-primary fw-bold' : '' }}"
+                            href="/categories">
                             <i class="fe fe-list fe-16"></i>
-                            <span class="ml-3 item-text">Kategori</span>
+                            <span class="ml-3 item-text">Kategori Produk</span>
                         </a>
                     </li>
                     <li class="nav-item w-100">
-                        <a class="nav-link  {{ Request::is('expenses*') ? 'text-primary fw-bold' : '' }}" href="/expenses">
+                        <a class="nav-link {{ Request::is('categories-expense*') ? 'text-primary fw-bold' : '' }}"
+                            href="/categories-expense">
+                            <i class="fe fe-list fe-16"></i>
+                            <span class="ml-3 item-text">Kategori Pengeluaran</span>
+                        </a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a class="nav-link  {{ Request::is('expenses*') ? 'text-primary fw-bold' : '' }}"
+                            href="/expenses">
                             <i class="fe fe-credit-card fe-16"></i>
                             <span class="ml-3 item-text">Pengeluaran</span>
                         </a>
                     </li>
                     <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('product-incomes*') ? 'text-primary fw-bold' : '' }}" href="/product-incomes">
+                        <a class="nav-link {{ Request::is('product-incomes*') ? 'text-primary fw-bold' : '' }}"
+                            href="/product-incomes">
                             <i class="fe fe-shopping-cart fe-16"></i>
                             <span class="ml-3 item-text">Belanja</span>
                         </a>
                     </li>
                     <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('transactions*') ? 'text-primary fw-bold' : '' }}" href="/transactions">
+                        <a class="nav-link {{ Request::is('transactions*') ? 'text-primary fw-bold' : '' }}"
+                            href="/transactions">
                             <i class="fe fe-credit-card fe-16"></i>
                             <span class="ml-3 item-text">Transaksi</span>
                         </a>
                     </li>
                     <li class="nav-item w-100">
-                        <a class="nav-link" {{ Request::is('report*') ? 'text-primary fw-bold' : '' }} href="/laporan">
+                        <a class="nav-link" {{ Request::is('report*') ? 'text-primary fw-bold' : '' }}
+                            href="/laporan">
                             <i class="fe fe-bar-chart fe-16"></i>
                             <span class="ml-3 item-text">Laporan</span>
                         </a>
@@ -156,8 +171,8 @@
     <script src="{{ asset('assets/js') }}/moment.min.js"></script>
     <script src="{{ asset('assets/js') }}/bootstrap.min.js"></script>
     <script src="{{ asset('assets/js') }}/simplebar.min.js"></script>
-    <script src='js/daterangepicker.js'></script>
-    <script src='js/jquery.stickOnScroll.js'></script>
+    <script src='{{ asset('assets/js') }}/daterangepicker.js'></script>
+    <script src='{{ asset('assets/js') }}/jquery.stickOnScroll.js'></script>
     <script src="{{ asset('assets/js') }}/tinycolor-min.js"></script>
     <script src="{{ asset('assets/js') }}/config.js"></script>
     <script src="{{ asset('assets/js') }}/d3.min.js"></script>
@@ -175,14 +190,14 @@
     <script src="{{ asset('assets/js') }}/jquery.sparkline.min.js"></script>
     <script src="{{ asset('assets/js') }}/apexcharts.min.js"></script>
     <script src="{{ asset('assets/js') }}/apexcharts.custom.js"></script>
-    <script src='js/jquery.mask.min.js'></script>
-    <script src='js/select2.min.js'></script>
-    <script src='js/jquery.steps.min.js'></script>
-    <script src='js/jquery.validate.min.js'></script>
-    <script src='js/jquery.timepicker.js'></script>
-    <script src='js/dropzone.min.js'></script>
-    <script src='js/uppy.min.js'></script>
-    <script src='js/quill.min.js'></script>
+    <script src='{{ asset('assets/js') }}/jquery.mask.min.js'></script>
+    <script src='{{ asset('assets/js') }}/select2.min.js'></script>
+    <script src='{{ asset('assets/js') }}/jquery.steps.min.js'></script>
+    <script src='{{ asset('assets/js') }}/jquery.validate.min.js'></script>
+    <script src='{{ asset('assets/js') }}/jquery.timepicker.js'></script>
+    <script src='{{ asset('assets/js') }}/dropzone.min.js'></script>
+    <script src='{{ asset('assets/js') }}/uppy.min.js'></script>
+    <script src='{{ asset('assets/js') }}/quill.min.js'></script>
     <script>
         $('.select2').select2({
             theme: 'bootstrap4',
@@ -363,9 +378,35 @@
         function gtag() {
             dataLayer.push(arguments);
         }
-        gtag('js', new Date());
+        gtag('{{ asset('assets/js') }}', new Date());
         gtag('config', 'UA-56159088-1');
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @stack('scripts')
+    @if (session('success') || session('error'))
+        <script>
+            $(document).ready(function() {
+                var successMessage = "{{ session('success') }}";
+                var errorMessage = "{{ session('error') }}";
+
+                if (successMessage) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: successMessage,
+                    });
+                }
+
+                if (errorMessage) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage,
+                    });
+                }
+            });
+        </script>
+    @endif
 </body>
 
 </html>

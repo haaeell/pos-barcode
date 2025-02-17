@@ -9,7 +9,10 @@
                 <div class="card-body">
                     <form action="{{ route('expenses.store') }}" method="POST">
                         @csrf
-                        
+                        <div class="form-group">
+                            <label for="name">Nama Pengeluaran</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
                         <div class="form-group">
                             <label for="category_expense_id">Kategori</label>
                             <select class="form-control" name="category_expense_id" required>
@@ -17,10 +20,6 @@
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Nama Pengeluaran</label>
-                            <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="form-group">
                             <label for="amount">Jumlah</label>

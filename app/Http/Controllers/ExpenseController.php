@@ -24,7 +24,7 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         Expense::create($request->all());
-        return redirect()->route('expenses.index');
+        return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil ditambahkan.');
     }
 
     public function show($id)
@@ -44,12 +44,12 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
         $expense->update($request->all());
-        return redirect()->route('expenses.index');
+        return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         Expense::destroy($id);
-        return redirect()->route('expenses.index');
+        return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil dihapus.');
     }
 }

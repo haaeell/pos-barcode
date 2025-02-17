@@ -23,7 +23,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         Product::create($request->all());
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function show($id)
@@ -43,12 +43,12 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->update($request->all());
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         Product::destroy($id);
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
     }
 }
