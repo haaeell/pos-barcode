@@ -11,6 +11,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Barcode</th>
                                 <th>Name</th>
                                 <th>Harga Jual</th>
                                 <th>Stok</th>
@@ -22,8 +23,11 @@
                             @foreach ($products as $product)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>
+                                        <img src="data:image/png;base64,{{ $barcodes[$product->id] }}" alt="Barcode">
+                                    </td>
                                     <td>{{ $product->name }}</td>
-                                    <td>{{ $product->sale_price }}</td>
+                                    <td>Rp. {{ number_format($product->sale_price, 0, ',', '.') }}</td>
                                     <td>{{ $product->stock }}</td>
                                     <td>{{ $product->category->name }}</td>
                                     <td>

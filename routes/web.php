@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoryExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductIncomeController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionProductController;
 use Illuminate\Support\Facades\Auth;
@@ -27,5 +29,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('transactions', TransactionController::class);
     Route::resource('transaction-products', TransactionProductController::class);
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/search', [PosController::class, 'searchByBarcode'])->name('pos.search');
+    Route::post('/pos/save-transaction', [PosController::class, 'saveTransaction']);
+
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
