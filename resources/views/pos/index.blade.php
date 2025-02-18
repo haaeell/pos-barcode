@@ -89,7 +89,6 @@
                 checkSaveButtonStatus();
             }
 
-            // Enable or disable the Save button based on the input values
             function checkSaveButtonStatus() {
                 let amountPaid = parseFloat($('#amountPaid').val()) || 0;
                 if (amountPaid >= totalAmount) {
