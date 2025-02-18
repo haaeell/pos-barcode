@@ -7,35 +7,26 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="{{ route('expenses.update', $expense->id) }}" method="POST">
+                    <form action="{{ route('product-incomes.update', $data->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        
-                        <!-- Nama Pengeluaran -->
-                        <div class="form-group">
-                            <label for="name">Nama Pengeluaran</label>
-                            <input type="text" class="form-control" name="name" value="{{ $expense->name }}" required>
-                        </div>
 
-                        <!-- Kategori Pengeluaran -->
                         <div class="form-group">
-                            <label for="category_expense_id">Kategori</label>
-                            <select class="form-control" name="category_expense_id" required>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}" 
-                                        @if($category->id == $expense->category_expense_id) selected @endif>
-                                        {{ $category->name }}
-                                    </option>
+                            <label for="product_id">Produk</label>
+                            <select class="form-control select2" name="product_id" required>
+                                @foreach ($products as $product)
+                                    <option value="{{ $product->id }}" {{ $product->id == $data->product_id ? 'selected' : '' }}>{{ $product->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-
-                        <!-- Jumlah Pengeluaran -->
                         <div class="form-group">
-                            <label for="amount">Jumlah</label>
-                            <input type="number" step="0.01" class="form-control" name="amount" value="{{ $expense->amount }}" required>
+                            <label for="name">Jumlah</label>
+                            <input type="number" value="{{ $data->qty }}" step="1" class="form-control" name="qty" required>
                         </div>
-
+                        <div class="form-group">
+                            <label for="purchase_price">Harga Total</label>
+                            <input type="number" value="{{ $data->purchase_price }}"  class="form-control" name="purchase_price" required>
+                        </div>
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary">Update Pengeluaran</button>
                     </form>
