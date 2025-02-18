@@ -31,6 +31,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>
+<style>
+    .card {
+        border-radius: 16px;
+    }
+</style>
 
 <body class="vertical  light  ">
     <div class="wrapper">
@@ -150,7 +155,7 @@
                     </li>
                     <li class="nav-item w-100">
                         <a class="nav-link" {{ Request::is('report*') ? 'text-primary fw-bold' : '' }}
-                            href="/laporan">
+                            href="/report">
                             <i class="fe fe-bar-chart fe-16"></i>
                             <span class="ml-3 item-text">Laporan</span>
                         </a>

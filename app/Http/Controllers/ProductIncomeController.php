@@ -8,11 +8,19 @@ use Illuminate\Http\Request;
 
 class ProductIncomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = ProductIncome::with('product')->get();
+        $query = ProductIncome::with('product');
+        
+        if ($request->has('date') && $request->date != null) {
+            $query->whereDate('created_at', $request->date);
+        }    
+
+        $data = $query->get();
+
         return view('product-incomes.index', compact('data'));
     }
+
 
     public function create()
     {
@@ -23,6 +31,11 @@ class ProductIncomeController extends Controller
     public function store(Request $request)
     {
         ProductIncome::create($request->all());
+
+        $product = Product::findOrFail($request->product_id);
+        $product->stock += $request->qty;
+        $product->save();
+
         return redirect()->route('product-incomes.index')->with('success', 'Belanja berhasil ditambahkan.');
     }
 
@@ -41,8 +54,16 @@ class ProductIncomeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $data = ProductIncome::findOrFail($id);
-        $data->update($request->all());
+        $productIncome = ProductIncome::findOrFail($id);
+        $oldQty = $productIncome->qty;
+        $product = Product::findOrFail($request->product_id);
+        $qtyDifference = $request->qty - $oldQty;
+
+        $product->stock += $qtyDifference;
+        $product->save();
+
+        $productIncome->update($request->all());
+
         return redirect()->route('product-incomes.index')->with('success', 'Belanja berhasil diperbarui.');
     }
 

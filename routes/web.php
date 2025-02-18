@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductIncomeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionProductController;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('transaction-products', TransactionProductController::class);
 
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::get('/report', [ReportController::class, 'index'])->name('report.index');
     Route::post('/pos/search', [PosController::class, 'searchByBarcode'])->name('pos.search');
     Route::post('/pos/save-transaction', [PosController::class, 'saveTransaction']);
 

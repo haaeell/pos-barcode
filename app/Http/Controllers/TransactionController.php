@@ -10,8 +10,8 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with('cashier')->get();
-        return view('transactions.index', compact('transactions'));
+        $data = Transaction::with('cashier')->get();
+        return view('transactions.index', compact('data'));
     }
 
     public function create()

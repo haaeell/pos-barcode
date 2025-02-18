@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Pengeluaran')
+@section('title', 'Tambah Barang Masuk')
 
 @section('content')
     <div class="row">
@@ -13,7 +13,7 @@
                             <label for="product_id">Produk</label>
                             <select class="form-control select2" name="product_id" required>
                                 @foreach ($products as $product)
-                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                <option value="{{ $product->id }}">{{ $product->name }} - {{ $product->unit }}</option>
                                 @endforeach
                             </select>
                         </div>

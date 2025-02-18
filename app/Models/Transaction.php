@@ -10,7 +10,7 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'cashier_id', 'date', 'payment_type', 'total_payment',
+        'cashier_id','nota_number', 'date', 'payment_type', 'total_payment',
     ];
 
     public function cashier()

@@ -52,6 +52,7 @@ class CreateAllTables extends Migration
 
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('nota_number')->unique();
             $table->foreignId('cashier_id')->constrained('users')->onDelete('cascade');
             $table->date('date');
             $table->string('payment_type');
