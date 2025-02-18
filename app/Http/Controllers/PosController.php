@@ -22,8 +22,14 @@ class PosController extends Controller
         DB::beginTransaction();
 
         try {
+            $today = Carbon::now()->format('Ymd');
+            $transactionCount = Transaction::whereDate('date', Carbon::today())->count();
+            $sequenceNumber = str_pad($transactionCount + 1, 3, '0', STR_PAD_LEFT);
+            $notaNumber =   'TRX-' . $today . '-' . $sequenceNumber;
+
             $transaction = new Transaction();
             $transaction->cashier_id = Auth::user()->id;
+            $transaction->nota_number = $notaNumber;
             $transaction->date = Carbon::now();
             $transaction->payment_type = $request->payment_type;
             $transaction->total_payment = $request->total_payment;

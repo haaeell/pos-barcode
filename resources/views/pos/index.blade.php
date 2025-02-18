@@ -237,6 +237,12 @@
                             totalAmount = 0;
                             updateProductTable();
 
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Transaksi berhasil diproses.',
+                                confirmButtonText: 'OK'
+                            });
                         } else {
                             Swal.fire({
                                 icon: 'error',
