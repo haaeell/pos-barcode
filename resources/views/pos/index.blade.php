@@ -51,7 +51,7 @@
                         <label for="change">Total Kembalian:</label>
                         <input type="number" id="change" class="form-control" placeholder="Kembalian" readonly>
                     </div>
-                    <button id="saveTransaction" class="btn btn-primary mt-3" disabled>Simpan</button>
+                    <button id="saveTransaction" type="submit" class="btn btn-primary mt-3" disabled>Simpan</button>
                 </div>
             </div>
         </div>
@@ -69,8 +69,8 @@
                 <div class="modal-body" id="receiptContent">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary" id="printReceipt">Cetak Struk</button>
+                    <button type="submit" class="btn btn-primary" id="printReceipt">Cetak Struk</button>
+                    <button type="submit" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -111,14 +111,13 @@
                 let amountPaid = parseFloat($('#amountPaid').val()) || 0;
                 if (amountPaid >= totalAmount) {
                     $('#saveTransaction').prop('disabled', false);
-                    $('#change').val((amountPaid - totalAmount).toFixed(2)); // Calculate change
+                    $('#change').val((amountPaid - totalAmount).toFixed(2));
                 } else {
                     $('#saveTransaction').prop('disabled', true);
                     $('#change').val('');
                 }
             }
 
-            // Handle barcode scan input
             $('#barcode').on('change', function() {
                 var barcode = $(this).val();
                 console.log(barcode);
@@ -170,7 +169,6 @@
                 }, 200);
             });
 
-            // Quantity change logic
             $(document).on('click', '.plus-btn', function() {
                 let productId = $(this).data('id');
                 let product = cart.find(item => item.id === productId);
@@ -213,7 +211,6 @@
                 }
             });
 
-            // Handle payment amount change
             $('#amountPaid').on('input', function() {
                 checkSaveButtonStatus();
             });
@@ -284,7 +281,7 @@
 
             function displayReceipt(receipt) {
                 let receiptHtml = `
-        <p>ID Transaksi: ${receipt.transaction_id}</p>
+        <p>ID Transaksi: ${receipt.nota_nummber}</p>
         <p>Kasir: ${receipt.cashier_name}</p>
         <p>Tanggal: ${receipt.date}</p>
         <p>Tipe Pembayaran: ${receipt.payment_type}</p>

@@ -58,7 +58,7 @@ class PosController extends Controller
             DB::commit();
 
             $receiptData = [
-                'transaction_id' => $transaction->id,
+                'transaction_id' => $transaction->nota_number,
                 'cashier_name' => $transaction->cashier->name,
                 'date' => $transaction->date->format('d-m-Y H:i:s'),
                 'payment_type' => $transaction->payment_type,
