@@ -23,7 +23,7 @@ class ProductIncomeController extends Controller
     public function store(Request $request)
     {
         ProductIncome::create($request->all());
-        return redirect()->route('expenses.index')->with('success', 'Belanja berhasil ditambahkan.');
+        return redirect()->route('product-incomes.index')->with('success', 'Belanja berhasil ditambahkan.');
     }
 
     public function show($id)
@@ -36,7 +36,7 @@ class ProductIncomeController extends Controller
     {
         $data = ProductIncome::findOrFail($id);
         $products = Product::all();
-        return view('product-incomes.edit', compact('expense', 'products'));
+        return view('product-incomes.edit', compact('data', 'products'));
     }
 
     public function update(Request $request, $id)

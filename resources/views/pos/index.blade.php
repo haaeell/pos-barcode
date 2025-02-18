@@ -202,7 +202,13 @@
 
             $('#saveTransaction').on('click', function() {
                 if (cart.length === 0) {
-                    alert("No products selected.");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Peringatan!',
+                        text: 'Tidak ada produk yang dipilih.',
+                        confirmButtonText: 'OK'
+                    });
+
                     return;
                 }
 
@@ -232,11 +238,22 @@
                             updateProductTable();
 
                         } else {
-                            alert(response.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: response.message,
+                                confirmButtonText: 'OK'
+                            });
+
                         }
                     },
                     error: function() {
-                        alert('Terjadi kesalahan, coba lagi.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan, coba lagi.!',
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
             });

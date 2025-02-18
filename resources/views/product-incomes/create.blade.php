@@ -7,23 +7,23 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="{{ route('expenses.store') }}" method="POST">
+                    <form action="{{ route('product-incomes.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="name">Nama Pengeluaran</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="category_expense_id">Kategori</label>
-                            <select class="form-control" name="category_expense_id" required>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <label for="product_id">Produk</label>
+                            <select class="form-control select2" name="product_id" required>
+                                @foreach ($products as $product)
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="amount">Jumlah</label>
-                            <input type="number" step="0.01" class="form-control" name="amount" required>
+                            <label for="name">Jumlah</label>
+                            <input type="number" step="1" class="form-control" name="qty" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchase_price">Harga Total</label>
+                            <input type="number"  class="form-control" name="purchase_price" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
