@@ -271,7 +271,7 @@
                                     <p>Kasir: ${receipt.cashier_name}</p>
                                     <p>Tanggal: ${receipt.date}</p>
                                     <p>Tipe Pembayaran: ${receipt.payment_type}</p>
-                                    <p>Total Pembayaran: Rp. ${receipt.total_payment.toFixed(2)}</p>
+                                    <p>Total Pembayaran: Rp. ${receipt.total_payment}</p>
                                     <h5>Detail Produk:</h5>
                                     <table class="table">
                                         <thead>
