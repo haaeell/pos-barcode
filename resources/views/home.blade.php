@@ -3,89 +3,41 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-12 col-lg-4">
+        <div class="col-md-12 col-lg-6">
             <div class="card shadow eq-card mb-4">
                 <div class="card-body mb-n3">
-                    <div class="row items-align-baseline h-100">
+                    <div class="row items-align-baseline align-items-center text-center h-100">
                         <div class="col-md-6 my-3">
-                            <p class="mb-0"><strong class="mb-0 text-uppercase text-muted">Earning</strong></p>
-                            <h3>$2,562</h3>
-                            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit.</p>
+                            <i class="fe fe-shopping-cart text-dark mb-3"  style="font-size: 70px"></i>
+                            <h5 class="mt-4">Total Transaksi Hari Ini</h5>
                         </div>
                         <div class="col-md-6 my-4 text-center">
-                            <div lass="chart-box mx-4">
-                                <div id="radialbarWidget"></div>
-                            </div>
+                            <h2 class="font-weight-bold" style="font-size: 50px">
+                                32
+                            </h2>
                         </div>
-                        <div class="col-md-6 border-top py-3">
-                            <p class="mb-1"><strong class="text-muted">Cost</strong></p>
-                            <h4 class="mb-0">108</h4>
-                            <p class="small text-muted mb-0"><span>37.7% Last week</span></p>
-                        </div> <!-- .col -->
-                        <div class="col-md-6 border-top py-3">
-                            <p class="mb-1"><strong class="text-muted">Revenue</strong></p>
-                            <h4 class="mb-0">1168</h4>
-                            <p class="small text-muted mb-0"><span>-18.9% Last week</span></p>
-                        </div> <!-- .col -->
                     </div>
-                </div> <!-- .card-body -->
-            </div> <!-- .card -->
-        </div> <!-- .col -->
-        <div class="col-md-12 col-lg-4">
+                </div> 
+            </div> 
+        </div> 
+        <div class="col-md-12 col-lg-6">
             <div class="card shadow eq-card mb-4">
-                <div class="card-body">
-                    <div class="chart-widget mb-2">
-                        <div id="radialbar"></div>
-                    </div>
-                    <div class="row items-align-center">
-                        <div class="col-4 text-center">
-                            <p class="text-muted mb-1">Cost</p>
-                            <h6 class="mb-1">$1,823</h6>
-                            <p class="text-muted mb-0">+12%</p>
+                <div class="card-body mb-n3">
+                    <div class="row items-align-baseline align-items-center text-center h-100">
+                        <div class="col-md-6 my-3">
+                            <i class="fe fe-dollar-sign mb-3 text-dark"  style="font-size: 70px"></i>
+                            <h5 class="mt-4">Total Pendapatan Hari Ini</h5>
                         </div>
-                        <div class="col-4 text-center">
-                            <p class="text-muted mb-1">Revenue</p>
-                            <h6 class="mb-1">$6,830</h6>
-                            <p class="text-muted mb-0">+8%</p>
-                        </div>
-                        <div class="col-4 text-center">
-                            <p class="text-muted mb-1">Earning</p>
-                            <h6 class="mb-1">$4,830</h6>
-                            <p class="text-muted mb-0">+8%</p>
+                        <div class="col-md-6 my-4 text-center">
+                            <h2 class="font-weight-bold" style="font-size: 30px">
+                                Rp. 1.205.000
+                            </h2>
                         </div>
                     </div>
-                </div> <!-- .card-body -->
-            </div> <!-- .card -->
-        </div> <!-- .col -->
-        <div class="col-md-12 col-lg-4">
-            <div class="card shadow eq-card mb-4">
-                <div class="card-body">
-                    <div class="d-flex mt-3 mb-4">
-                        <div class="flex-fill pt-2">
-                            <p class="mb-0 text-muted">Total</p>
-                            <h4 class="mb-0">108</h4>
-                            <span class="small text-muted">+37.7%</span>
-                        </div>
-                        <div class="flex-fill chart-box mt-n2">
-                            <div id="barChartWidget"></div>
-                        </div>
-                    </div> <!-- .d-flex -->
-                    <div class="row border-top">
-                        <div class="col-md-6 pt-4">
-                            <h6 class="mb-0">108 <span class="small text-muted">+37.7%</span>
-                            </h6>
-                            <p class="mb-0 text-muted">Cost</p>
-                        </div>
-                        <div class="col-md-6 pt-4">
-                            <h6 class="mb-0">1168 <span class="small text-muted">-18.9%</span>
-                            </h6>
-                            <p class="mb-0 text-muted">Revenue</p>
-                        </div>
-                    </div> <!-- .row -->
-                </div> <!-- .card-body -->
-            </div> <!-- .card -->
-        </div> <!-- .col-md -->
+                </div> 
+            </div> 
+        </div> 
+     
     </div>
     <div class="mb-2 align-items-center">
         <div class="card shadow mb-4">
