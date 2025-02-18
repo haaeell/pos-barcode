@@ -51,7 +51,7 @@
                         <label for="change">Total Kembalian:</label>
                         <input type="number" id="change" class="form-control" placeholder="Kembalian" readonly>
                     </div>
-                    <button id="saveTransaction" type="submit" class="btn btn-primary mt-3" disabled>Simpan</button>
+                    <button id="saveTransaction" class="btn btn-primary mt-3" disabled>Simpan</button>
                 </div>
             </div>
         </div>
@@ -69,8 +69,8 @@
                 <div class="modal-body" id="receiptContent">
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="printReceipt">Cetak Struk</button>
-                    <button type="submit" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="printReceipt">Cetak Struk</button>
                 </div>
             </div>
         </div>
@@ -316,7 +316,7 @@
     `;
 
                 $('#receiptContent').html(receiptHtml);
-                $('#receiptModal').modal('show'); 
+                $('#receiptModal').modal('show');
             }
 
         });
@@ -329,6 +329,18 @@
             window.print();
             document.body.innerHTML = originalContents;
             location.reload();
+        });
+
+        $(document).on('keypress', '#amountPaid', function(e) {
+            if (e.which === 13) {
+                $('#saveTransaction').click();
+            }
+        });
+
+        $(document).on('keypress', '#receiptContent', function(e) {
+            if (e.which === 13) {
+                $('#printReceipt').click();
+            }
         });
     </script>
 @endpush
