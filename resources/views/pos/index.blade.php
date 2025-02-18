@@ -330,11 +330,5 @@
                 $('#saveTransaction').click();
             }
         });
-
-        $(document).on('keypress', '#saveReceipt', function(e) {
-            if (e.which === 13) {
-                $('#printReceipt').click();
-            }
-        });
     </script>
 @endpush
