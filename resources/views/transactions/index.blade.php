@@ -20,7 +20,7 @@
                         <tbody>
                             @foreach ($data as $item)
                                 <tr>
-                                   <td>{{ $loop->iteratiion }}</td>
+                                   <td>{{ $loop->iteration }}</td>
                                    <td>{{ $item->nota_number }}</td>
                                    <td>{{ $item->created_at }}</td>
                                    <td><button class="btn btn-primary btn-sm">Detail Produk</button></td>
