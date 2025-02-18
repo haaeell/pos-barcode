@@ -56,7 +56,25 @@
             </div>
         </div>
     </div>
-    <div id="receiptContainer"></div>
+    <div class="modal fade" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="receiptModalLabel">Struk Pembelian</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="receiptContent">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="printReceipt">Cetak Struk</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -266,46 +284,54 @@
 
             function displayReceipt(receipt) {
                 let receiptHtml = `
-                                    <h4>Struk Pembelian</h4>
-                                    <p>ID Transaksi: ${receipt.transaction_id}</p>
-                                    <p>Kasir: ${receipt.cashier_name}</p>
-                                    <p>Tanggal: ${receipt.date}</p>
-                                    <p>Tipe Pembayaran: ${receipt.payment_type}</p>
-                                    <p>Total Pembayaran: Rp. ${receipt.total_payment}</p>
-                                    <h5>Detail Produk:</h5>
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Nama Produk</th>
-                                                <th>Harga</th>
-                                                <th>Jumlah</th>
-                                                <th>Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                `;
+        <p>ID Transaksi: ${receipt.transaction_id}</p>
+        <p>Kasir: ${receipt.cashier_name}</p>
+        <p>Tanggal: ${receipt.date}</p>
+        <p>Tipe Pembayaran: ${receipt.payment_type}</p>
+        <p>Total Pembayaran: Rp. ${receipt.total_payment}</p>
+        <h5>Detail Produk:</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
                 receipt.products.forEach(product => {
                     receiptHtml += `
-                                        <tr>
-                                            <td>${product.name}</td>
-                                            <td>Rp. ${product.price}</td>
-                                            <td>${product.quantity}</td>
-                                            <td>Rp. ${product.total}</td>
-                                        </tr>
-                                    `;
+            <tr>
+                <td>${product.name}</td>
+                <td>Rp. ${product.price}</td>
+                <td>${product.quantity}</td>
+                <td>Rp. ${product.total}</td>
+            </tr>
+        `;
                 });
 
                 receiptHtml += `
-                                        </tbody>
-                                    </table>
-                                    <button onclick="window.print()">Cetak Struk</button>
-                                `;
+            </tbody>
+        </table>
+    `;
 
-                $('#receiptContainer').html(
-                    receiptHtml);
+                $('#receiptContent').html(receiptHtml);
+                $('#receiptModal').modal('show'); 
             }
 
+        });
+
+        $(document).on('click', '#printReceipt', function() {
+            let printContents = document.getElementById('receiptContent').innerHTML;
+            let originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
         });
     </script>
 @endpush
