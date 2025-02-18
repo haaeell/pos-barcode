@@ -68,7 +68,7 @@
                 </div>
                 <div class="modal-body" id="receiptContent">
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" id="saveReceipt">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                     <button type="button" class="btn btn-primary" id="printReceipt">Cetak Struk</button>
                 </div>
@@ -252,12 +252,6 @@
                             totalAmount = 0;
                             updateProductTable();
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Transaksi berhasil diproses.',
-                                confirmButtonText: 'OK'
-                            });
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -337,7 +331,7 @@
             }
         });
 
-        $(document).on('keypress', '#receiptContent', function(e) {
+        $(document).on('keypress', '#saveReceipt', function(e) {
             if (e.which === 13) {
                 $('#printReceipt').click();
             }
