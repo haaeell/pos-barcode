@@ -121,7 +121,8 @@ class PosController extends Controller
                 'product' => [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->sale_price
+                    'price' => $product->sale_price,
+                    'stock' => $product->stock,
                 ]
             ]);
         }

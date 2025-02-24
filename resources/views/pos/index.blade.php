@@ -32,6 +32,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">Nama Produk</th>
+                                    <th class="text-center">Sisa Stok</th>
                                     <th class="text-center">Harga</th>
                                     <th class="text-center">Jumlah</th>
                                     <th class="text-center">Total Harga</th>
@@ -99,6 +100,8 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $.ajaxSetup({
@@ -123,11 +126,13 @@
                         };
                     },
                     processResults: function(data) {
+                        console.log(data)
                         return {
                             results: data.products.map(product => ({
                                 id: product.id,
-                                text: `${product.name} - Rp. ${formatRupiah(product.sale_price)}`,
-                                price: product.sale_price
+                                text: `${product.name} - ${formatRupiah(product.sale_price)}`,
+                                price: product.sale_price,
+                                stock: product.stock,
                             }))
                         };
                     }
@@ -163,6 +168,7 @@
                                 cart.push({
                                     id: product.id,
                                     name: product.name,
+                                    stock: product.stock,
                                     price: product.price,
                                     quantity: 1
                                 });
@@ -189,10 +195,11 @@
                 cart.forEach((item, index) => {
                     let itemTotal = item.price * item.quantity;
                     totalAmount += itemTotal;
-
+                    console.log(item)
                     productTable.append(`
                 <tr>
                     <td>${item.name}</td>
+                    <td>${item.stock}</td>
                     <td>${formatRupiah(item.price)}</td>
                     <td>
                         <div class="d-flex align-items-center">
@@ -251,6 +258,18 @@
                 }
             });
 
+            $(document).on('keyup', '.quantity-input', _.debounce(function() {
+                let productId = $(this).data('id');
+                let newQuantity = parseInt($(this).val()) || 1;
+                let product = cart.find(item => item.id === productId);
+
+                if (product) {
+                    if (newQuantity < 1) newQuantity = 1;
+                    product.quantity = newQuantity;
+                    updateProductTable();
+                }
+            }, 300));
+
             $(document).on('click', '.remove-btn', function() {
                 let productId = $(this).data('id');
                 cart = cart.filter(item => item.id !== productId);
@@ -261,6 +280,8 @@
                 let productId = e.params.data.id;
                 let productName = e.params.data.text.split(" - ")[0];
                 let productPrice = parseFloat(e.params.data.price);
+                let productStock = e.params.data.stock;
+
 
                 let existingProduct = cart.find(item => item.id === productId);
                 if (existingProduct) {
@@ -270,6 +291,7 @@
                         id: productId,
                         name: productName,
                         price: productPrice,
+                        stock: productStock,
                         quantity: 1
                     });
                 }
