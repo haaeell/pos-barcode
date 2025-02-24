@@ -88,9 +88,9 @@ class PosController extends Controller
                 'message' => 'Terjadi kesalahan, coba lagi.',
                 'error_details' => [
                     'message' => $e->getMessage(),
-                    'code' => $e->getCode(), 
+                    'code' => $e->getCode(),
                     'file' => $e->getFile(),
-                    'line' => $e->getLine() 
+                    'line' => $e->getLine()
                 ]
             ]);
         }
@@ -99,19 +99,23 @@ class PosController extends Controller
     {
         $query = $request->input('query');
         $products = Product::where('name', 'LIKE', "%{$query}%")->limit(5)->get();
-    
+
         if ($products->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'Produk tidak ditemukan']);
         }
-    
+
         return response()->json(['status' => 'success', 'products' => $products]);
     }
-    
+
     public function getProduct(Request $request)
     {
-        $product = Product::where('code', $request->barcode)->first();
+        $products = Product::all()->pluck('code', 'id')->toArray();
+        $barcode = $request->barcode;
 
-        if ($product) {
+        $foundId = $this->boyerMooreSearch($products, $barcode);
+
+        if ($foundId !== null) {
+            $product = Product::find($foundId);
             return response()->json([
                 'success' => true,
                 'product' => [
@@ -125,40 +129,42 @@ class PosController extends Controller
         return response()->json(['success' => false]);
     }
 
-
-    private function boyerMooreSearch($text, $pattern)
+    private function boyerMooreSearch($products, $pattern)
     {
-        $m = strlen($pattern);  // Panjang pola (barcode)
-        $n = strlen($text);     // Panjang teks (barcode produk)
+        foreach ($products as $id => $code) {
+            if ($this->boyerMoore($code, $pattern)) {
+                return $id;
+            }
+        }
+        return null;
+    }
 
-        // Membuat tabel Bad Character Heuristic
-        $badChar = array_fill(0, 256, -1); // Ukuran ASCII (256 karakter)
+    private function boyerMoore($text, $pattern)
+    {
+        $m = strlen($pattern);
+        $n = strlen($text);
+        if ($m > $n) return false;
 
-        // Mengisi tabel dengan posisi terakhir dari setiap karakter dalam pola
+        $badChar = array_fill(0, 256, -1);
         for ($i = 0; $i < $m; $i++) {
             $badChar[ord($pattern[$i])] = $i;
         }
 
-        $s = 0;
-        $matches = [];
-
-        while ($s <= ($n - $m)) {
+        $shift = 0;
+        while ($shift <= ($n - $m)) {
             $j = $m - 1;
 
-            // Terus kurangi $j selama karakter cocok
-            while ($j >= 0 && $pattern[$j] == $text[$s + $j]) {
+            while ($j >= 0 && $pattern[$j] == $text[$shift + $j]) {
                 $j--;
             }
 
-            // Jika pola ditemukan
             if ($j < 0) {
-                $matches[] = $s; // Mencatat posisi kecocokan
-                $s += ($s + $m < $n) ? $m - $badChar[ord($text[$s + $m])] : 1;
-            } else {
-                $s += max(1, $j - $badChar[ord($text[$s + $j])]);
+                return true;
             }
-        }
 
-        return $matches;  // Mengembalikan daftar posisi kecocokan
+            $shift += max(1, $j - $badChar[ord($text[$shift + $j])]);
+        }
+        return false;
     }
+
 }

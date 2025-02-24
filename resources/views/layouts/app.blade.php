@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
-    <title>Tiny Dashboard - A Bootstrap Dashboard Template</title>
+    <title>POS</title>
     <!-- Simple bar CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css') }}/simplebar.css">
     <!-- Fonts CSS -->
@@ -31,6 +31,8 @@
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+    <link href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet" />
+
 </head>
 <style>
     .card {
@@ -44,10 +46,6 @@
             <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
                 <i class="fe fe-menu navbar-toggler-icon"></i>
             </button>
-            <form class="form-inline mr-auto searchform text-muted">
-                <input class="form-control mr-sm-2 bg-transparent border-0 pl-4 text-muted" type="search"
-                    placeholder="Type something..." aria-label="Search">
-            </form>
             <ul class="nav">
                 <li class="nav-item">
                     <a class="nav-link text-muted my-2" href="#" id="modeSwitcher" data-mode="light">
@@ -416,7 +414,13 @@
         gtag('config', 'UA-56159088-1');
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     @stack('scripts')
+    <script>
+         $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+    </script>
     @if (session('success') || session('error'))
         <script>
             $(document).ready(function() {

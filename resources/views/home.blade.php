@@ -47,10 +47,10 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <h5 class="mt-2">Total Pendapatan Hari Ini</h5>
                             <h2 class="font-weight-bold mt-3" style="font-size: 30px">
                                 Rp {{ number_format($totalPriceToday, 0, ',', '.') }}
                             </h2>
-                            <h5 class="mt-2">Total Pendapatan Hari Ini</h5>
                         </div>
                     </div>
                 </div>

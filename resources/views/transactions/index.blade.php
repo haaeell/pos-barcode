@@ -6,6 +6,18 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
+                    <div class="col-md-6">
+                        <form action="{{ route('transactions.index') }}" method="get">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="date" name="date" class="form-control" placeholder="Tanggal">
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-primary">Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <table class="table table-striped table-hover table-borderless">
                         <thead>
                             <tr>

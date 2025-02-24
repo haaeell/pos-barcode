@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = Transaction::with('cashier')->get();
+        $query = Transaction::with('cashier');
+        
+        if ($request->has('date') && $request->date != null) {
+            $query->whereDate('created_at', $request->date);
+        }    
+
+        $data = $query->get();
         return view('transactions.index', compact('data'));
     }
 

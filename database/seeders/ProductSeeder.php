@@ -2,73 +2,32 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Product;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class ProductSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        $electronics = Category::where('name', 'Electronics')->first();
-        $furniture = Category::where('name', 'Furniture')->first();
-        $clothing = Category::where('name', 'Clothing')->first();
-        $food = Category::where('name', 'Food & Beverages')->first();
-        $sports = Category::where('name', 'Sports Equipment')->first();
+        $faker = Faker::create();
 
-        Product::create([
-            'name' => 'Smartphone',
-            'code' => '12345678',
-            'sale_price' => 1000.00,
-            'stock' => 50,
-            'unit' => 'Piece',
-            'category_id' => $electronics->id,
-        ]);
+        $categories = DB::table('categories')->pluck('id')->toArray();
 
-        Product::create([
-            'name' => 'Laptop',
-            'code' => '12345679',
-            'sale_price' => 1500.00,
-            'stock' => 30,
-            'unit' => 'Piece',
-            'category_id' => $electronics->id,
-        ]);
+        $products = [];
+        for ($i = 0; $i < 1000; $i++) {
+            $products[] = [
+                'name' => $faker->word,
+                'code' => strtoupper($faker->bothify('???-#####')),
+                'sale_price' => $faker->randomFloat(2, 1000, 100000),
+                'stock' => $faker->numberBetween(1, 500),
+                'unit' => $faker->randomElement(['pcs', 'box', 'kg', 'liter']),
+                'category_id' => $faker->randomElement($categories),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
 
-        Product::create([
-            'name' => 'Sofa',
-            'code' => '12345670',
-            'sale_price' => 500.00,
-            'stock' => 20,
-            'unit' => 'Piece',
-            'category_id' => $furniture->id,
-        ]);
-
-        Product::create([
-            'name' => 'T-Shirt',
-            'code' => '12345677',
-            'sale_price' => 20.00,
-            'stock' => 100,
-            'unit' => 'Piece',
-            'category_id' => $clothing->id,
-        ]);
-
-        Product::create([
-            'name' => 'Pizza',
-            'code' => '12345676',
-            'sale_price' => 15.00,
-            'stock' => 200,
-            'unit' => 'Piece',
-            'category_id' => $food->id,
-        ]);
-
-        Product::create([
-            'name' => 'Tennis Racket',
-            'code' => '12345675',
-            'sale_price' => 80.00,
-            'stock' => 10,
-            'unit' => 'Piece',
-            'category_id' => $sports->id,
-        ]);
+        DB::table('products')->insert($products);
     }
 }
