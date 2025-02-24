@@ -95,23 +95,36 @@ class PosController extends Controller
             ]);
         }
     }
-
-    public function searchByBarcode(Request $request)
+    public function searchProduct(Request $request)
+    {
+        $query = $request->input('query');
+        $products = Product::where('name', 'LIKE', "%{$query}%")->limit(5)->get();
+    
+        if ($products->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'Produk tidak ditemukan']);
+        }
+    
+        return response()->json(['status' => 'success', 'products' => $products]);
+    }
+    
+    public function getProduct(Request $request)
     {
         $product = Product::where('code', $request->barcode)->first();
 
-        if (!$product) {
+        if ($product) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Produk tidak ditemukan'
+                'success' => true,
+                'product' => [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->sale_price
+                ]
             ]);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'products' => [$product]
-        ]);
+        return response()->json(['success' => false]);
     }
+
 
     private function boyerMooreSearch($text, $pattern)
     {

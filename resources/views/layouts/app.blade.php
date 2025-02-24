@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
@@ -61,9 +62,14 @@
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Profile</a>
-                        <a class="dropdown-item" href="#">Settings</a>
-                        <a class="dropdown-item" href="#">Activities</a>
+                        <a href="{{ route('logout') }}" class="dropdown-item"
+                            onclick="event.preventDefault();
+                                      document.getElementById('logout-form').submit();">
+                            <i class="ti-power-off text-primary"></i> Logout </a>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
                     </div>
                 </li>
             </ul>
@@ -96,56 +102,69 @@
                         </a>
                     </li>
                 </ul>
+                @if (Auth::user()->role == 'kasir')
+                    <p class="text-muted nav-heading mt-4 mb-1">
+                        <span>Penjualan</span>
+                    </p>
+                @endif
+                @if (Auth::user()->role == 'kasir')
+                    <ul class="navbar-nav flex-fill w-100 mb-2">
+                        <li class="nav-item w-100">
+                            <a class="nav-link {{ Request::is('pos') ? 'text-primary fw-bold' : '' }}"
+                                href="/pos">
+                                <i class="fe fe-shopping-cart fe-16"></i>
+                                <span class="ml-3 item-text">POS</span>
+                            </a>
+                        </li>
+                    </ul>
+                @endif
+
+
+                @if (Auth::user()->role == 'admin')
+                    <p class="text-muted nav-heading mt-4 mb-1">
+                        <span>Master</span>
+                    </p>
+                @endif
+
                 <ul class="navbar-nav flex-fill w-100 mb-2">
-                    <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('pos') ? 'text-primary fw-bold' : '' }}" href="/pos">
-                            <i class="fe fe-shopping-cart fe-16"></i>
-                            <span class="ml-3 item-text">POS</span>
-                        </a>
-                    </li>
-                </ul>
+                    @if (Auth::user()->role == 'admin')
+                        <li class="nav-item w-100">
+                            <a class="nav-link {{ Request::is('products*') ? 'text-primary fw-bold' : '' }}"
+                                href="/products">
+                                <i class="fe fe-package fe-16"></i>
+                                <span class="ml-3 item-text">Produk</span>
+                            </a>
 
-                <p class="text-muted nav-heading mt-4 mb-1">
-                    <span>Master</span>
-                </p>
-
-                <ul class="navbar-nav flex-fill w-100 mb-2">
-                    <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('products*') ? 'text-primary fw-bold' : '' }}"
-                            href="/products">
-                            <i class="fe fe-package fe-16"></i>
-                            <span class="ml-3 item-text">Produk</span>
-                        </a>
-
-                    </li>
-                    <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('categories') ? 'text-primary fw-bold' : '' }}"
-                            href="/categories">
-                            <i class="fe fe-list fe-16"></i>
-                            <span class="ml-3 item-text">Kategori Produk</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('categories-expense*') ? 'text-primary fw-bold' : '' }}"
-                            href="/categories-expense">
-                            <i class="fe fe-list fe-16"></i>
-                            <span class="ml-3 item-text">Kategori Pengeluaran</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a class="nav-link  {{ Request::is('expenses*') ? 'text-primary fw-bold' : '' }}"
-                            href="/expenses">
-                            <i class="fe fe-credit-card fe-16"></i>
-                            <span class="ml-3 item-text">Pengeluaran</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a class="nav-link {{ Request::is('product-incomes*') ? 'text-primary fw-bold' : '' }}"
-                            href="/product-incomes">
-                            <i class="fe fe-shopping-cart fe-16"></i>
-                            <span class="ml-3 item-text">Belanja</span>
-                        </a>
-                    </li>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a class="nav-link {{ Request::is('categories') ? 'text-primary fw-bold' : '' }}"
+                                href="/categories">
+                                <i class="fe fe-list fe-16"></i>
+                                <span class="ml-3 item-text">Kategori Produk</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a class="nav-link {{ Request::is('categories-expense*') ? 'text-primary fw-bold' : '' }}"
+                                href="/categories-expense">
+                                <i class="fe fe-list fe-16"></i>
+                                <span class="ml-3 item-text">Kategori Pengeluaran</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a class="nav-link  {{ Request::is('expenses*') ? 'text-primary fw-bold' : '' }}"
+                                href="/expenses">
+                                <i class="fe fe-credit-card fe-16"></i>
+                                <span class="ml-3 item-text">Pengeluaran</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a class="nav-link {{ Request::is('product-incomes*') ? 'text-primary fw-bold' : '' }}"
+                                href="/product-incomes">
+                                <i class="fe fe-shopping-cart fe-16"></i>
+                                <span class="ml-3 item-text">Belanja</span>
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item w-100">
                         <a class="nav-link {{ Request::is('transactions*') ? 'text-primary fw-bold' : '' }}"
                             href="/transactions">
@@ -153,13 +172,15 @@
                             <span class="ml-3 item-text">Transaksi</span>
                         </a>
                     </li>
-                    <li class="nav-item w-100">
-                        <a class="nav-link" {{ Request::is('report*') ? 'text-primary fw-bold' : '' }}
-                            href="/report">
-                            <i class="fe fe-bar-chart fe-16"></i>
-                            <span class="ml-3 item-text">Laporan</span>
-                        </a>
-                    </li>
+                    @if (Auth::user()->role == 'admin')
+                        <li class="nav-item w-100">
+                            <a class="nav-link" {{ Request::is('report*') ? 'text-primary fw-bold' : '' }}
+                                href="/report">
+                                <i class="fe fe-bar-chart fe-16"></i>
+                                <span class="ml-3 item-text">Laporan</span>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </nav>
         </aside>

@@ -1,14 +1,32 @@
 @extends('layouts.app')
 
 @section('title', 'Data Produk')
+
 @section('content')
+    <style>
+        .select2-results__option:hover {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+    </style>
+
+
     <div class="row">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
                     <div id="posApp">
-                        <label for="barcode">Scan Barcode:</label>
-                        <input type="text" id="barcode" name="barcode" class="form-control" autocomplete="off" autofocus>
+                        <label for="productSearch">Scan Barcode / Cari Produk:</label>
+                        <select id="productSearch" class="form-control"></select>
+                        <input type="text" id="barcodeScanner" class="form-control my-2"
+                            placeholder="Scan barcode di sini..." autofocus>
+
+
                         <h3 class="mb-3 mt-5">Data Produk:</h3>
                         <table class="table table-bordered" id="productTable">
                             <thead>
@@ -49,24 +67,27 @@
 
                     <div class="mb-3">
                         <label for="change">Total Kembalian:</label>
-                        <input type="number" id="change" class="form-control" placeholder="Kembalian" readonly>
+                        <input type="text" id="change" class="form-control" placeholder="Kembalian" readonly>
                     </div>
                     <button id="saveTransaction" class="btn btn-primary mt-3" disabled>Simpan</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Struk -->
     <div class="modal fade" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="receiptModalLabel">Struk Pembelian</h5>
+                    <h5 class="modal-title">Struk Pembelian</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body" id="receiptContent">
+                    <!-- Konten struk akan ditampilkan di sini -->
                 </div>
                 <div class="modal-footer" id="saveReceipt">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -80,101 +101,142 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             let cart = [];
             let totalAmount = 0;
-            let debounceTimeout;
+
+            $('#productSearch').select2({
+                placeholder: 'Cari Produk...',
+                minimumInputLength: 1,
+                ajax: {
+                    url: '/pos/search-product',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            query: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.products.map(product => ({
+                                id: product.id,
+                                text: `${product.name} - Rp. ${formatRupiah(product.sale_price)}`,
+                                price: product.sale_price
+                            }))
+                        };
+                    }
+                }
+            });
+
+            $('#barcodeScanner').on('keypress', function(event) {
+                if (event.which === 13) {
+                    let barcode = $(this).val().trim();
+                    if (barcode !== '') {
+                        addToCart(barcode);
+                        $(this).val('');
+                    }
+                }
+            });
+
+            function addToCart(barcode) {
+                $.ajax({
+                    url: '/pos/get-product',
+                    method: 'GET',
+                    data: {
+                        barcode: barcode
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.success) {
+                            let product = response.product;
+                            let existingItem = cart.find(item => item.id === product.id);
+
+                            if (existingItem) {
+                                existingItem.quantity += 1;
+                            } else {
+                                cart.push({
+                                    id: product.id,
+                                    name: product.name,
+                                    price: product.price,
+                                    quantity: 1
+                                });
+                            }
+
+                            updateProductTable();
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Oops...',
+                                text: 'Produk tidak ditemukan!',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                });
+            }
 
             function updateProductTable() {
-                $('#productTable tbody').empty();
-                cart.forEach(item => {
-                    $('#productTable tbody').append(`
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>Rp. ${item.price}</td>
-                        <td>
-                            <div class="d-flex gap-2 align-items-center justify-content-center">
-                                <button class="btn btn-sm btn-primary minus-btn" data-id="${item.id}">-</button>
-                                <input type="number" class="quantity-input form-control w-25 mx-2" data-id="${item.id}" value="${item.quantity}" min="0">
-                                <button class="btn btn-sm btn-primary plus-btn" data-id="${item.id}">+</button>
-                            </div>
-                        </td>
-                        <td>Rp. ${item.price * item.quantity}</td>
-                        <td><button class="btn btn-sm btn-danger remove-btn" data-id="${item.id}">Remove</button></td>
-                    </tr>
-                `);
+                let productTable = $('#productTable tbody');
+                productTable.empty();
+                totalAmount = 0;
+
+                cart.forEach((item, index) => {
+                    let itemTotal = item.price * item.quantity;
+                    totalAmount += itemTotal;
+
+                    productTable.append(`
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${formatRupiah(item.price)}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-sm btn-primary minus-btn" data-id="${item.id}">-</button>
+                            <input type="number" class="quantity-input form-control mx-2" data-id="${item.id}" value="${item.quantity}" min="1">
+                            <button class="btn btn-sm btn-primary plus-btn" data-id="${item.id}">+</button>
+                        </div>
+                    </td>
+                    <td>${formatRupiah(itemTotal)}</td>
+                    <td><button class="btn btn-sm btn-danger remove-btn" data-id="${item.id}">Hapus</button></td>
+                </tr>
+            `);
                 });
-                $('#totalAmount').text(totalAmount.toFixed(2));
+
+                $('#totalAmount').text(formatRupiah(totalAmount));
                 checkSaveButtonStatus();
+            }
+
+            function formatRupiah(angka) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR'
+                }).format(angka);
             }
 
             function checkSaveButtonStatus() {
                 let amountPaid = parseFloat($('#amountPaid').val()) || 0;
-                if (amountPaid >= totalAmount) {
+                if (amountPaid >= totalAmount && totalAmount > 0) {
                     $('#saveTransaction').prop('disabled', false);
-                    $('#change').val((amountPaid - totalAmount).toFixed(2));
+                    $('#change').val(formatRupiah(amountPaid - totalAmount));
                 } else {
                     $('#saveTransaction').prop('disabled', true);
                     $('#change').val('');
                 }
             }
 
-            $('#barcode').on('change', function() {
-                var barcode = $(this).val();
-                console.log(barcode);
-                if (barcode.length === 0) {
-                    $('#errorMessage').hide();
-                    return;
-                }
-
-                clearTimeout(debounceTimeout);
-
-                debounceTimeout = setTimeout(function() {
-                    $.ajax({
-                        url: '/pos/search',
-                        method: 'POST',
-                        data: {
-                            barcode: barcode,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            if (response.status == 'success' && response.products
-                                .length > 0) {
-                                var product = response.products[0];
-                                let existingProduct = cart.find(item => item.id ===
-                                    product.id);
-                                if (existingProduct) {
-                                    existingProduct.quantity += 1;
-                                } else {
-                                    cart.push({
-                                        id: product.id,
-                                        name: product.name,
-                                        price: product.sale_price,
-                                        quantity: 1
-                                    });
-                                }
-                                totalAmount += parseFloat(product.sale_price);
-                                updateProductTable();
-                                $('#barcode').val('');
-                                $('#errorMessage').hide();
-                            } else {
-                                $('#errorMessage').text(response.message).show();
-                            }
-                        },
-                        error: function() {
-                            $('#errorMessage').text('Terjadi kesalahan. Coba lagi.')
-                                .show();
-                        }
-                    });
-                }, 200);
-            });
+            $('#amountPaid').on('input', checkSaveButtonStatus);
 
             $(document).on('click', '.plus-btn', function() {
                 let productId = $(this).data('id');
                 let product = cart.find(item => item.id === productId);
                 if (product) {
                     product.quantity += 1;
-                    totalAmount += parseFloat(product.price);
+                    totalAmount += product.price;
                     updateProductTable();
                 }
             });
@@ -184,43 +246,44 @@
                 let product = cart.find(item => item.id === productId);
                 if (product && product.quantity > 1) {
                     product.quantity -= 1;
-                    totalAmount -= parseFloat(product.price);
-                    updateProductTable();
-                }
-            });
-
-            $(document).on('change', '.quantity-input', function() {
-                let productId = $(this).data('id');
-                let newQuantity = parseInt($(this).val());
-                let product = cart.find(item => item.id === productId);
-                if (product && newQuantity >= 0) {
-                    totalAmount -= parseFloat(product.price) * product.quantity;
-                    product.quantity = newQuantity;
-                    totalAmount += parseFloat(product.price) * newQuantity;
+                    totalAmount -= product.price;
                     updateProductTable();
                 }
             });
 
             $(document).on('click', '.remove-btn', function() {
                 let productId = $(this).data('id');
-                let product = cart.find(item => item.id === productId);
-                if (product) {
-                    totalAmount -= parseFloat(product.price) * product.quantity;
-                    cart = cart.filter(item => item.id !== productId);
-                    updateProductTable();
+                cart = cart.filter(item => item.id !== productId);
+                updateProductTable();
+            });
+
+            $('#productSearch').on('select2:select', function(e) {
+                let productId = e.params.data.id;
+                let productName = e.params.data.text.split(" - ")[0];
+                let productPrice = parseFloat(e.params.data.price);
+
+                let existingProduct = cart.find(item => item.id === productId);
+                if (existingProduct) {
+                    existingProduct.quantity += 1;
+                } else {
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        price: productPrice,
+                        quantity: 1
+                    });
                 }
+
+                updateProductTable();
+                $('#productSearch').val(null).trigger('change');
             });
 
-            $('#amountPaid').on('input', function() {
-                checkSaveButtonStatus();
-            });
-
-            $('#saveTransaction').on('click', function() {
+            $('#saveTransaction').click(function() {
                 if (cart.length === 0) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Peringatan!',
-                        text: 'Tidak ada produk yang dipilih.',
+                        title: 'Oops...',
+                        text: 'Tidak ada produk dalam keranjang!',
                         confirmButtonText: 'OK'
                     });
 
@@ -228,22 +291,19 @@
                 }
 
                 let paymentMethod = $('#paymentMethod').val();
-                let totalAmount = parseFloat($('#totalAmount').text());
                 let amountPaid = parseFloat($('#amountPaid').val());
 
                 $.ajax({
                     url: '/pos/save-transaction',
                     method: 'POST',
                     data: {
-                        payment_type: paymentMethod,
+                        cart: cart,
                         total_payment: totalAmount,
-                        cart: cart.map(item => ({
-                            id: item.id,
-                            quantity: item.quantity
-                        })),
-                        _token: '{{ csrf_token() }}'
+                        amountPaid: amountPaid,
+                        payment_type: paymentMethod
                     },
                     success: function(response) {
+                        console.log(response)
                         if (response.status === 'success') {
 
                             displayReceipt(response.receipt);
@@ -275,7 +335,7 @@
 
             function displayReceipt(receipt) {
                 let receiptHtml = `
-        <p>ID Transaksi: ${receipt.nota_nummber}</p>
+        <p>Nomor Nota: ${receipt.transaction_id}</p>
         <p>Kasir: ${receipt.cashier_name}</p>
         <p>Tanggal: ${receipt.date}</p>
         <p>Tipe Pembayaran: ${receipt.payment_type}</p>
@@ -323,12 +383,6 @@
             window.print();
             document.body.innerHTML = originalContents;
             location.reload();
-        });
-
-        $(document).on('keypress', '#amountPaid', function(e) {
-            if (e.which === 13) {
-                $('#saveTransaction').click();
-            }
         });
     </script>
 @endpush

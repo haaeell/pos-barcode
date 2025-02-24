@@ -32,7 +32,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::get('/report', [ReportController::class, 'index'])->name('report.index');
-    Route::post('/pos/search', [PosController::class, 'searchByBarcode'])->name('pos.search');
+    Route::get('/pos/search-product', [PosController::class, 'searchProduct']);
+    Route::get('/pos/get-product', [PosController::class, 'getProduct']);
+
+
     Route::post('/pos/save-transaction', [PosController::class, 'saveTransaction']);
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
