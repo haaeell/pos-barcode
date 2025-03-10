@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-body">
                     <a href="{{ route('categories.create') }}" class="btn btn-outline-primary mb-3">Tambah Kategori</a>
-                    <table class="table table-striped table-hover table-borderless">
+                    <table class="table table-striped table-hover table-borderless" id="dataTable">
                         <thead>
                             <tr>
                                 <th>No</th>

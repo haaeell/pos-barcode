@@ -15,7 +15,7 @@
                             <form action="{{ route('product-incomes.index') }}" method="get">
                                 <div class="row">
                                     <div class="col">
-                                        <input type="date" name="date" class="form-control" placeholder="Tanggal">
+                                        <input type="date" name="date" value="{{ request('date') }}" class="form-control" placeholder="Tanggal">
                                     </div>
                                     <div class="col-auto">
                                         <button class="btn btn-primary">Filter</button>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped table-hover table-borderless">
+                    <table class="table table-striped table-hover table-borderless"  id="dataTable">
                         <thead>
                             <tr>
                                 <th>No</th>

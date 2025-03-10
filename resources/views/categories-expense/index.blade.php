@@ -7,8 +7,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <a href="{{ route('categories.create') }}" class="btn btn-outline-primary mb-3">Tambah Kategori Pengeluaran</a>
-                    <table class="table table-striped table-hover table-borderless">
+                    <a href="{{ route('categories-expense.create') }}" class="btn btn-outline-primary mb-3">Tambah Kategori Pengeluaran</a>
+                    <table class="table table-striped table-hover table-borderless" id="dataTable">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -22,8 +22,8 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>
-                                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning">Edit</a>
-                                        <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;">
+                                        <a href="{{ route('categories-expense.edit', $category->id) }}" class="btn btn-warning">Edit</a>
+                                        <form action="{{ route('categories-expense.destroy', $category->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">Delete</button>

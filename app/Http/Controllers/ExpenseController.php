@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $expenses = Expense::with('category')->get();
+        $query = Expense::with('category');
+
+        if ($request->has('date') && $request->date != null) {
+            $query->whereDate('created_at', $request->date);
+        }    
+
+        $expenses = $query->get();
+        
         return view('expenses.index', compact('expenses'));
     }
 
