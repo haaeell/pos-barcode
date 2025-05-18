@@ -17,7 +17,9 @@
                     <h4 class="fw-bold text-center">
                         Login POS
                     </h4>
+                    
                     <div class="card border-0 shadow" style="border-radius: 16px">
+                
 
                         <div class="card-body py-5">
                             <form method="POST" action="{{ route('login') }}">

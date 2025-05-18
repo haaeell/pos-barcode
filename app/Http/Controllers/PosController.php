@@ -51,6 +51,7 @@ class PosController extends Controller
                 TransactionProduct::create([
                     'transaction_id' => $transaction->id,
                     'product_id' => $item['id'],
+                    'product_name' => $product->name,
                     'qty' => $item['quantity']
                 ]);
             }
@@ -98,13 +99,19 @@ class PosController extends Controller
     public function searchProduct(Request $request)
     {
         $query = $request->input('query');
-        $products = Product::where('name', 'LIKE', "%{$query}%")->limit(5)->get();
+        $products = Product::all();
+        $matchedProducts = [];
+        foreach ($products as $product) {
+            if ($this->boyerMoore($product->name, $query)) {
+                $matchedProducts[] = $product;
+            }
+        }
 
-        if ($products->isEmpty()) {
+        if (empty($matchedProducts)) {
             return response()->json(['status' => 'error', 'message' => 'Produk tidak ditemukan']);
         }
 
-        return response()->json(['status' => 'success', 'products' => $products]);
+        return response()->json(['status' => 'success', 'products' => $matchedProducts]);
     }
 
     public function getProduct(Request $request)
@@ -168,4 +175,52 @@ class PosController extends Controller
         return false;
     }
 
+    public function testSearchPerformance(Request $request)
+    {
+        $barcodes = $request->input('barcodes', []);
+
+        $allProducts = Product::all();
+        $results = [];
+
+        foreach ($barcodes as $barcode) {
+            // Native Search
+            $native_start = microtime(true);
+            $product_native = Product::where('code', $barcode)->first();
+            $native_end = microtime(true);
+            $native_time = round($native_end - $native_start, 5);
+
+            // Boyer-Moore Search
+            $boyer_start = microtime(true);
+            $product_boyer = null;
+            foreach ($allProducts as $product) {
+                if ($this->boyerMoore($product->code, $barcode)) {
+                    $product_boyer = $product;
+                    break;
+                }
+            }
+            $boyer_end = microtime(true);
+            $boyer_time = round($boyer_end - $boyer_start, 5);
+
+            $results[] = [
+                'barcode' => $barcode,
+                'native_time' => number_format($native_time, 9),
+                'boyer_time' => number_format($boyer_time, 9),
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'results' => $results
+        ]);
+    }
+
+    public function getProducts(Request $request)
+    {
+        $limit = $request->query('limit', 10);
+        $barcodes = Product::limit($limit)->pluck('code')->toArray();
+
+        return response()->json([
+            'barcodes' => $barcodes
+        ]);
+    }
 }

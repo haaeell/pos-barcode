@@ -13,6 +13,7 @@
             background-color: #007bff !important;
             color: white !important;
         }
+        
     </style>
 
 
@@ -325,9 +326,7 @@
                         payment_type: paymentMethod
                     },
                     success: function(response) {
-                        console.log(response)
                         if (response.status === 'success') {
-
                             displayReceipt(response.receipt);
 
                             cart = [];
@@ -356,45 +355,32 @@
             });
 
             function displayReceipt(receipt) {
-                let receiptHtml = `
-        <p>Nomor Nota: ${receipt.transaction_id}</p>
-        <p>Kasir: ${receipt.cashier_name}</p>
-        <p>Tanggal: ${receipt.date}</p>
-        <p>Tipe Pembayaran: ${receipt.payment_type}</p>
-        <p>Total Pembayaran: Rp. ${receipt.total_payment}</p>
-        <h5>Detail Produk:</h5>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nama Produk</th>
-                    <th>Harga</th>
-                    <th>Jumlah</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+                console.log(receipt);
+                let receiptHtml = `<pre>`;
+                receiptHtml += `Nota    : ${receipt.transaction_id}\n`;
+                receiptHtml += `Kasir   : ${receipt.cashier_name}\n`;
+                receiptHtml += `Tanggal : ${receipt.date}\n`;
+                receiptHtml += `Bayar   : ${receipt.payment_type}\n`;
+
+                receiptHtml += `-----------------------------------------\n`;
 
                 receipt.products.forEach(product => {
-                    receiptHtml += `
-            <tr>
-                <td>${product.name}</td>
-                <td>Rp. ${product.price}</td>
-                <td>${product.quantity}</td>
-                <td>Rp. ${product.total}</td>
-            </tr>
-        `;
+                    const name = (product.name ?? '').padEnd(18, ' ').slice(0, 18);
+                    const qty  =  product.quantity;
+                    const price = new Intl.NumberFormat('id-ID').format(product.price);
+                    const total = new Intl.NumberFormat('id-ID').format(product.total);
+                    receiptHtml += `${name} ${qty}x ${price} = ${total}\n`;
                 });
 
-                receiptHtml += `
-            </tbody>
-        </table>
-    `;
+                receiptHtml += `-----------------------------------------\n`;
+                receiptHtml += `Total         : Rp ${receipt.total_payment}\n`;
+                receiptHtml += `-----------------------------------------\n`;
+                receiptHtml += `         Terima kasih atas kunjungannya\n`;
+                receiptHtml += `</pre>`;
 
                 $('#receiptContent').html(receiptHtml);
                 $('#receiptModal').modal('show');
             }
-
         });
 
         $(document).on('click', '#printReceipt', function() {

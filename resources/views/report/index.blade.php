@@ -3,6 +3,36 @@
 @section('title', 'Laporan')
 
 @section('content')
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" action="{{ route('report.index') }}" class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="tahun">Tahun</label>
+                            <input type="number" name="tahun" id="tahun" class="form-control"
+                                value="{{ request('tahun', now()->year) }}" placeholder="Tahun">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="bulan">Bulan</label>
+                            <select name="bulan" id="bulan" class="form-control">
+                                <option value="">Semua Bulan</option>
+                                @foreach (range(1, 12) as $bln)
+                                    <option value="{{ $bln }}" {{ request('bulan') == $bln ? 'selected' : '' }}>
+                                        {{ DateTime::createFromFormat('!m', $bln)->format('F') }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 align-self-end">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -45,7 +75,7 @@
                     <h4 class="font-weight-bold">Laporan Laba Rugi</h4>
                     <table class="table">
                         <tbody>
-                            @foreach($laporan as $item)
+                            @foreach ($laporan as $item)
                                 <tr>
                                     <td>{{ $item['keterangan'] }}</td>
                                     <td>Rp. {{ number_format($item['jumlah'], 0, ',', '.') }}</td>

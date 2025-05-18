@@ -10,15 +10,19 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
+        $date = $request->date ?? date('Y-m-d');
+
         $query = Transaction::with('cashier');
-        
-        if ($request->has('date') && $request->date != null) {
-            $query->whereDate('created_at', $request->date);
-        }    
+
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        }
 
         $data = $query->get();
-        return view('transactions.index', compact('data'));
+
+        return view('transactions.index', compact('data', 'date'));
     }
+
 
     public function create()
     {

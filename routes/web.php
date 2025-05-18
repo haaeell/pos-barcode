@@ -35,7 +35,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/pos/search-product', [PosController::class, 'searchProduct']);
     Route::get('/pos/get-product', [PosController::class, 'getProduct']);
 
-
     Route::post('/pos/save-transaction', [PosController::class, 'saveTransaction']);
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');

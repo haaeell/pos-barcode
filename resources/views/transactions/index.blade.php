@@ -10,7 +10,7 @@
                         <form action="{{ route('transactions.index') }}" method="get">
                             <div class="row">
                                 <div class="col">
-                                    <input type="date" name="date" class="form-control" value="{{ request('date') }}" placeholder="Tanggal">
+                                    <input type="date" name="date" class="form-control" value="{{ request('date') ?? date('Y-m-d') }}" placeholder="Tanggal">
                                 </div>
                                 <div class="col-auto">
                                     <button class="btn btn-primary">Filter</button>
@@ -46,6 +46,12 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                        {{-- <tfoot>
+                            <tr>
+                                <th colspan="5" class="text-right">Total</th>
+                                <th>Rp {{ number_format($data->sum('total_payment'), 0, ',', '.') }}</th>
+                            </tr>
+                        </tfoot> --}}
                     </table>
                 </div>
             </div>
@@ -77,7 +83,7 @@
                             <tbody>
                                 @foreach ($item->transactionProducts as $product)
                                     <tr>
-                                        <td>{{ $product->product->name }}</td>
+                                        <td>{{ $product->product_name }}</td>
                                         <td>{{ $product->qty }}</td>
                                         <td>Rp {{ number_format($product->product->sale_price, 0, ',', '.') }}</td>
                                         <td>Rp

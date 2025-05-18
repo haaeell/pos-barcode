@@ -13,7 +13,7 @@
                                 <th>No</th>
                                 <th>Barcode</th>
                                 <th>Name</th>
-                                <th>Harga Jual</th>
+                                <th class="text-nowrap">Harga Jual</th>
                                 <th>Stok</th>
                                 <th>Kategori</th>
                                 <th>Aksi</th>
@@ -30,8 +30,8 @@
                                     <td>Rp. {{ number_format($product->sale_price, 0, ',', '.') }}</td>
                                     <td>{{ $product->stock }}</td>
                                     <td>{{ $product->category->name }}</td>
-                                    <td>
-                                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">Edit</a>
+                                    <td class="d-flex">
+                                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning mx-2">Edit</a>
                                         <form action="{{ route('products.destroy', $product->id) }}" method="POST"
                                             style="display:inline;">
                                             @csrf

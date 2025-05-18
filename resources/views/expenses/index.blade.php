@@ -33,6 +33,7 @@
                                 <th>Nama Pengeluaran</th>
                                 <th>Kategori</th>
                                 <th>Jumlah</th>
+                                
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -43,6 +44,7 @@
                                     <td>{{ $expense->name }}</td>
                                     <td>{{ $expense->category->name }}</td>
                                     <td>Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
+                            
                                     <td>
                                         <a href="{{ route('expenses.edit', $expense->id) }}" class="btn btn-warning">Edit</a>
                                         <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST" style="display:inline;">
