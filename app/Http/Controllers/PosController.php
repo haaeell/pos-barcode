@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Termwind\Components\Dd;
 
 class PosController extends Controller
 {
@@ -73,7 +74,8 @@ class PosController extends Controller
                     'name' => $product->name,
                     'price' => $product->sale_price,
                     'quantity' => $item['quantity'],
-                    'total' => $product->sale_price * $item['quantity']
+                    'total' => $product->sale_price * $item['quantity'],
+                    'discount' => $product->discount,
                 ];
             }
 
@@ -98,11 +100,13 @@ class PosController extends Controller
     }
     public function searchProduct(Request $request)
     {
-        $query = $request->input('query');
+        $query = strtolower($request->input('query')); 
         $products = Product::all();
         $matchedProducts = [];
+
         foreach ($products as $product) {
-            if ($this->boyerMoore($product->name, $query)) {
+            $productName = strtolower($product->name);
+            if ($this->boyerMoore($productName, $query)) {
                 $matchedProducts[] = $product;
             }
         }
@@ -111,8 +115,22 @@ class PosController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Produk tidak ditemukan']);
         }
 
-        return response()->json(['status' => 'success', 'products' => $matchedProducts]);
+        $response = [];
+        foreach ($matchedProducts as $product) {
+            $response[] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'code' => $product->code,
+                'sale_price' => $product->final_price,
+                'stock' => $product->stock,
+                'discount' => $product->discount,
+                'price' => $product->sale_price,
+            ];
+        }
+
+        return response()->json(['status' => 'success', 'products' => $response]);
     }
+
 
     public function getProduct(Request $request)
     {
@@ -128,14 +146,34 @@ class PosController extends Controller
                 'product' => [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->sale_price,
+                    'price' => $product->final_price,
                     'stock' => $product->stock,
+                    'discount' => $product->discount,
                 ]
             ]);
         }
 
         return response()->json(['success' => false]);
     }
+
+    // public function getProduct($barcode)
+    // {
+    //     $product = Product::where('code', $barcode)->first();
+
+    //     if ($product) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'product' => [
+    //                 'id' => $product->id,
+    //                 'name' => $product->name,
+    //                 'price' => $product->sale_price,
+    //                 'stock' => $product->stock,
+    //             ]
+    //         ]);
+    //     }
+
+    //     return response()->json(['success' => false, 'message' => 'Produk tidak ditemukan']);
+    // }
 
     private function boyerMooreSearch($products, $pattern)
     {
@@ -153,27 +191,63 @@ class PosController extends Controller
         $n = strlen($text);
         if ($m > $n) return false;
 
+        // === 1. BAD CHARACTER  ===
         $badChar = array_fill(0, 256, -1);
         for ($i = 0; $i < $m; $i++) {
             $badChar[ord($pattern[$i])] = $i;
         }
 
-        $shift = 0;
-        while ($shift <= ($n - $m)) {
+        // === 2. GOOD SUFFIX  ===
+        $goodSuffix = array_fill(0, $m + 1, 0);
+        $border = array_fill(0, $m + 1, 0);
+        $i = $m;
+        $j = $m + 1;
+        $border[$i] = $j;
+
+        while ($i > 0) {
+            while ($j <= $m && $pattern[$i - 1] != $pattern[$j - 1]) {
+                if ($goodSuffix[$j] == 0) {
+                    $goodSuffix[$j] = $j - $i;
+                }
+                $j = $border[$j];
+            }
+            $i--;
+            $j--;
+            $border[$i] = $j;
+        }
+
+        $j = $border[0];
+        for ($i = 0; $i <= $m; $i++) {
+            if ($goodSuffix[$i] == 0) {
+                $goodSuffix[$i] = $j;
+            }
+            if ($i == $j) {
+                $j = $border[$j];
+            }
+        }
+        
+        // === 3. Pencocokan dengan Boyer-Moore ===
+        $s = 0; // shift
+        while ($s <= $n - $m) {
             $j = $m - 1;
 
-            while ($j >= 0 && $pattern[$j] == $text[$shift + $j]) {
+          
+            while ($j >= 0 && $pattern[$j] == $text[$s + $j]) {
                 $j--;
             }
 
             if ($j < 0) {
-                return true;
+                return true; 
+            } else {
+                $badCharShift = $j - $badChar[ord($text[$s + $j])] ?? -1;
+                $goodSuffixShift = $goodSuffix[$j + 1];
+                $s += max(1, max($badCharShift, $goodSuffixShift));
             }
-
-            $shift += max(1, $j - $badChar[ord($text[$shift + $j])]);
         }
+
         return false;
     }
+
 
     public function testSearchPerformance(Request $request)
     {

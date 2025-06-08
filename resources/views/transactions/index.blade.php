@@ -46,12 +46,12 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                        {{-- <tfoot>
+                        <tfoot>
                             <tr>
                                 <th colspan="5" class="text-right">Total</th>
                                 <th>Rp {{ number_format($data->sum('total_payment'), 0, ',', '.') }}</th>
                             </tr>
-                        </tfoot> --}}
+                        </tfoot>
                     </table>
                 </div>
             </div>

@@ -10,7 +10,13 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name','code', 'sale_price', 'stock', 'unit', 'category_id',
+        'name',
+        'code',
+        'sale_price',
+        'stock',
+        'unit',
+        'category_id',
+        'discount'
     ];
 
     public function category()
@@ -26,5 +32,10 @@ class Product extends Model
     public function transactionProducts()
     {
         return $this->hasMany(TransactionProduct::class);
+    }
+
+    public function getFinalPriceAttribute()
+    {
+        return $this->sale_price * (1 - $this->discount / 100);
     }
 }

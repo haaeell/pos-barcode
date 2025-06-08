@@ -10,3 +10,4 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/test-search-performance', [PosController::class, 'testSearchPerformance']);
 Route::get('/products', [PosController::class, 'getProducts']);
+Route::get('/pos/get-product', [PosController::class, 'getProduct']);

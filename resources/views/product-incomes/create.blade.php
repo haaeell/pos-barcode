@@ -31,4 +31,24 @@
             </div>
         </div>
     </div>
+      <!-- Menampilkan SweetAlert jika ada pesan sukses atau error -->
+      @if (session('success'))
+      <script>
+          Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: '{{ session('success') }}',
+          });
+      </script>
+  @endif
+
+  @if ($errors->any())
+      <script>
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: '{{ $errors->first() }}', // Menampilkan error pertama
+          });
+      </script>
+  @endif
 @endsection

@@ -28,7 +28,7 @@
                             placeholder="Scan barcode di sini..." autofocus>
 
 
-                        <h3 class="mb-3 mt-5">Data Produk:</h3>
+                        <h7 class="mb-3 mt-5">Data Produk:</h7>
                         <table class="table table-bordered" id="productTable">
                             <thead>
                                 <tr>
@@ -127,7 +127,6 @@
                         };
                     },
                     processResults: function(data) {
-                        console.log(data)
                         return {
                             results: data.products.map(product => ({
                                 id: product.id,
@@ -158,7 +157,6 @@
                         barcode: barcode
                     },
                     success: function(response) {
-                        console.log(response)
                         if (response.success) {
                             let product = response.product;
                             let existingItem = cart.find(item => item.id === product.id);
@@ -196,7 +194,6 @@
                 cart.forEach((item, index) => {
                     let itemTotal = item.price * item.quantity;
                     totalAmount += itemTotal;
-                    console.log(item)
                     productTable.append(`
                 <tr>
                     <td>${item.name}</td>
@@ -326,6 +323,7 @@
                         payment_type: paymentMethod
                     },
                     success: function(response) {
+                        console.log(response);
                         if (response.status === 'success') {
                             displayReceipt(response.receipt);
 
@@ -354,33 +352,50 @@
                 });
             });
 
-            function displayReceipt(receipt) {
-                console.log(receipt);
-                let receiptHtml = `<pre>`;
-                receiptHtml += `Nota    : ${receipt.transaction_id}\n`;
-                receiptHtml += `Kasir   : ${receipt.cashier_name}\n`;
-                receiptHtml += `Tanggal : ${receipt.date}\n`;
-                receiptHtml += `Bayar   : ${receipt.payment_type}\n`;
+           function displayReceipt(receipt) {
+    let receiptHtml = `<pre>`;
+    receiptHtml += `Nota    : ${receipt.transaction_id}\n`;
+    receiptHtml += `Kasir   : ${receipt.cashier_name}\n`;
+    receiptHtml += `Tanggal : ${receipt.date}\n`;
+    receiptHtml += `Bayar   : ${receipt.payment_type}\n`;
 
-                receiptHtml += `-----------------------------------------\n`;
+    receiptHtml += `----------------------------------------\n`;
 
-                receipt.products.forEach(product => {
-                    const name = (product.name ?? '').padEnd(18, ' ').slice(0, 18);
-                    const qty  =  product.quantity;
-                    const price = new Intl.NumberFormat('id-ID').format(product.price);
-                    const total = new Intl.NumberFormat('id-ID').format(product.total);
-                    receiptHtml += `${name} ${qty}x ${price} = ${total}\n`;
-                });
+    receipt.products.forEach(product => {
+        const name = (product.name ?? '').slice(0, 30);
+        const discount = product.discount && product.discount > 0 ? ` (${product.discount}%)` : '';
+        const qty = product.quantity;
+        const price = new Intl.NumberFormat('id-ID').format(product.price);
+        const total = new Intl.NumberFormat('id-ID').format(product.total);
 
-                receiptHtml += `-----------------------------------------\n`;
-                receiptHtml += `Total         : Rp ${receipt.total_payment}\n`;
-                receiptHtml += `-----------------------------------------\n`;
-                receiptHtml += `         Terima kasih atas kunjungannya\n`;
-                receiptHtml += `</pre>`;
+        // Baris 1: Nama Produk (Diskon)
+        receiptHtml += `${name}${discount}\n`;
 
-                $('#receiptContent').html(receiptHtml);
-                $('#receiptModal').modal('show');
-            }
+        // Baris 2: qty x harga       total di kanan
+        const qtyPrice = `${qty}x${price}`;
+        const left = ' '.repeat(5) + qtyPrice;
+        const spaceBetween = 40 - left.length - total.length;
+        const right = ' '.repeat(spaceBetween > 0 ? spaceBetween : 1) + total;
+
+        receiptHtml += `${left}${right}\n`;
+    });
+
+    receiptHtml += `----------------------------------------\n`;
+
+    // Baris total pembayaran rata kanan
+    const totalText = 'Total Pembayaran :';
+    const totalValue = `Rp ${new Intl.NumberFormat('id-ID').format(receipt.total_payment)}`;
+    const space = 40 - totalText.length - totalValue.length;
+    receiptHtml += `${totalText}${' '.repeat(space > 0 ? space : 1)}${totalValue}\n`;
+
+    receiptHtml += `----------------------------------------\n`;
+    receiptHtml += `       Terima kasih atas kunjungannya\n`;
+    receiptHtml += `</pre>`;
+
+    $('#receiptContent').html(receiptHtml);
+    $('#receiptModal').modal('show');
+}
+
         });
 
         $(document).on('click', '#printReceipt', function() {

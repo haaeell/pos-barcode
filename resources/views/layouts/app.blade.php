@@ -417,7 +417,7 @@
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     @stack('scripts')
     <script>
-         $(document).ready(function() {
+        $(document).ready(function() {
             $('#dataTable').DataTable();
         });
     </script>
@@ -445,6 +445,17 @@
             });
         </script>
     @endif
+
+    @if ($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ $errors->first() }}', // Menampilkan error pertama
+            });
+        </script>
+    @endif
+
 </body>
 
 </html>
