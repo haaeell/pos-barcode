@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductTemplateExport;
+use App\Imports\ProductImport;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\ProductIncome;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductController extends Controller
@@ -56,7 +59,7 @@ class ProductController extends Controller
             'stock' => $request->stock ?? 0,
         ]);
 
-        if($request->has('purchase_price')) {
+        if ($request->has('purchase_price')) {
             ProductIncome::create([
                 'product_id' => $product->id,
                 'qty' => $request->stock ?? 0,
@@ -91,5 +94,22 @@ class ProductController extends Controller
     {
         Product::destroy($id);
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new ProductImport, $request->file('file'));
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diimport');
+    }
+
+    public function exportTemplate()
+    {
+        $fileName = 'format_import_produk.xlsx';
+        return Excel::download(new ProductTemplateExport, $fileName);
     }
 }

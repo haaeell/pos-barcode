@@ -6,20 +6,66 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
+                    <!-- Tombol Import (Buka Modal) -->
+                    <button type="button" class="btn btn-outline-info mb-3" data-toggle="modal" data-target="#importModal">
+                        <i class="fas fa-file-import"></i> Import Produk
+                    </button>
 
-                    <a href="{{ route('products.create') }}" class="btn btn-outline-primary mb-3">Tambah</a>
+                    <!-- Tombol Tambah Produk -->
+                    <a href="{{ route('products.create') }}" class="btn btn-outline-primary mb-3 ml-2">
+                        <i class="fas fa-plus"></i> Tambah
+                    </a>
+
+                    <!-- Modal Import (Bootstrap 4) -->
+                    <div class="modal fade" id="importModal" tabindex="-1" role="dialog"
+                        aria-labelledby="importModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="importModalLabel">Import Produk</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('products.import') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="file">Upload File Excel:</label>
+                                            <div class="input-group">
+                                                <input type="file" name="file" class="form-control" accept=".xlsx"
+                                                    required>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="fas fa-upload"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <a href="{{ route('products.export-template') }}" class="btn btn-outline-success mb-3">
+                                        <i class="fas fa-download"></i> Download Format Excel
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-borderless" id="dataTable">
-                            <thead >
+                            <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Barcode</th>
+                                    {{-- <th>Barcode</th> --}}
                                     <th>Name</th>
                                     <th class="text-nowrap">Harga Jual</th>
                                     <th>Stok</th>
                                     <th>Kategori</th>
-                                    <th>Diskon (%)</th>
-                                    <th>Harga Setelah Diskon</th>
+                                    {{-- <th>Diskon (%)</th> --}}
+                                    {{-- <th>Harga Setelah Diskon</th> --}}
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -27,16 +73,16 @@
                                 @foreach ($products as $product)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>
+                                        {{-- <td> --}}
                                             {{-- <img src="data:image/png;base64,{{ $barcodes[$product->id] }}" alt="Barcode"> --}}
-                                            {{ $product->code }}
-                                        </td>
+                                            {{-- {{ $product->code }} --}}
+                                        {{-- </td> --}}
                                         <td class="text-nowrap">{{ $product->name }}</td>
                                         <td>Rp. {{ number_format($product->sale_price, 0, ',', '.') }}</td>
                                         <td>{{ $product->stock }}</td>
                                         <td>{{ $product->category->name }}</td>
-                                        <td>{{ number_format($product->discount, 0) }}%</td>
-                                        <td>Rp. {{ number_format($product->final_price, 0, ',', '.') }}</td>
+                                        {{-- <td>{{ number_format($product->discount, 0) }}%</td> --}}
+                                        {{-- <td>Rp. {{ number_format($product->final_price, 0, ',', '.') }}</td> --}}
                                         <td class="d-flex">
                                             <a href="{{ route('products.edit', $product->id) }}"
                                                 class="btn btn-warning mx-2">Edit</a>
@@ -52,7 +98,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-                        </table>    
+                        </table>
                     </div>
                 </div>
             </div>

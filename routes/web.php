@@ -30,6 +30,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('transactions', TransactionController::class);
     Route::resource('transaction-products', TransactionProductController::class);
 
+    Route::post('/products-import', [ProductController::class, 'import'])->name('products.import');
+    Route::get('/products-export-template', [ProductController::class, 'exportTemplate'])->name('products.export-template');
+
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::get('/report', [ReportController::class, 'index'])->name('report.index');
     Route::get('/pos/search-product', [PosController::class, 'searchProduct']);
